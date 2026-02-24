@@ -1,1 +1,565 @@
-# index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collection Calculator</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom,#eef2f8,#dde3f1);
+}
+
+.badge{
+  background:#2f5fd7;
+  color:white;
+  padding:8px 18px;
+  border-radius:25px;
+  display:inline-block;
+  font-weight:bold;
+  font-size:14px;
+  margin-top:30px;
+}
+
+.header{text-align:center;}
+
+.title{
+  font-size:28px;
+  color:#2f5fd7;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.subtitle{
+  color:gray;
+  margin-bottom:25px;
+}
+
+.card{
+  background:#f4f5f7;
+  margin:20px;
+  padding:20px;
+  border-radius:25px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.1);
+}
+
+label{
+  font-weight:bold;
+  display:block;
+  margin-top:15px;
+  margin-bottom:5px;
+}
+
+input, select{
+  width:100%;
+  padding:14px;
+  border-radius:15px;
+  border:1px solid #ccc;
+  font-size:16px;
+  outline:none;
+}
+
+button{
+  width:100%;
+  margin-top:20px;
+  padding:16px;
+  border:none;
+  border-radius:20px;
+  font-size:18px;
+  font-weight:bold;
+  color:white;
+  background:linear-gradient(to right,#2f5fd7,#4b84f5);
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="badge">SIO KOZHIKODE CITY</div>
+  <div class="title">Collection Calculator</div>
+  <div class="subtitle">Track your unit's collection progress with ease</div>
+</div>
+
+<div class="card">
+
+<label>Select Unit</label>
+<select id="unit" onchange="changeTarget()">
+  <option value="">-- Choose Unit --</option>
+  <option value="PUTHIYAGADI">PUTHIYAGADI</option>
+  <option value="KUNDUNGAL">GUNDUNGAL</option>
+  <option value="NADAKKAVU">NADAKKANU</option>
+  <option value="VELLAYIL">VELLAYIL</option>
+  <option value="KINNASSERY">KINNASSERY</option>
+  <option value="MATHOTTAM">MATHOTTAM</option>
+  <option value="ARAKINAR">ARAKINAR</option>
+  <option value="PANNIYANKARA">PANNIYANKARA</option>
+value="MEENCHANDA">MEENCHANDA</option>
+value="VB">VB</option>
+value="KARIKAMKULAM">KARIKAMKULAM</option>
+  <option value="AREA">AREA</option>
+</select>
+
+<label>Target Amount (₹)</label>
+<input type="number" id="target" readonly>
+
+<label>Total Collected (₹)</label>
+<input type="number" id="total">
+
+<label>Today Collected (₹)</label>
+<input type="number" id="today">
+
+<label>House Visit</label>
+<input type="number" id="house">
+
+<label>Person Visit</label>
+<input type="number" id="person">
+
+<button onclick="calculate()">Generate Report</button>
+
+</div>
+
+<script>
+
+const targets = {
+  PUTHIYAGADI: 25000,
+  KUNDUNGAL: 25000,
+  NADAKKAVU: 70000,
+  VELLAYIL: 25000,
+  KINNASSERY: 30000,
+  MATHOTTAM: 15000,
+  ARAKINAR: 12000,
+  PANNIYANKARA: 40000,
+  MEENCHANDA:12000,
+  VB:50000,
+  KARIKAMKULAM:20000,
+  AREA: 260000
+};
+
+function changeTarget(){
+  const unit = document.getElementById("unit").value;
+  document.getElementById("target").value = targets[unit] || "";
+}
+
+window.onload = changeTarget;
+
+function calculate(){
+
+  let unit = document.getElementById("unit").value;
+  let target = parseFloat(document.getElementById("target").value);
+  let total = parseFloat(document.getElementById("total").value);
+  let today = parseFloat(document.getElementById("today").value);
+  let house = document.getElementById("house").value || 0;
+  let person = document.getElementById("person").value || 0;
+
+  if(!unit || !target || !total || !today){
+    alert("Please fill required fields");
+    return;
+  }
+
+  let totalPercent = ((total/target)*100).toFixed(2);
+  let todayPercent = ((today/target)*100).toFixed(2);
+  let remaining = target - total;
+
+  let text = 
+`📊 Collection Report
+
+Unit: ${unit}
+Target: ₹${target}
+Total Collected: ₹${total}
+Today Collection: ₹${today}
+
+House Visit: ${house}
+Person Visit: ${person}
+
+Total Progress: ${totalPercent}%
+Today's Progress: ${todayPercent}%
+
+Remaining: ₹${remaining}`;
+
+  openReport(text);
+}
+
+function openReport(text){
+
+  let newWindow = window.open("", "_blank");
+
+  newWindow.document.write(`
+  <html>
+  <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection Report</title>
+
+  <style>
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom,#eef2f8,#dde3f1);
+  }
+
+  .header{text-align:center;margin-top:30px;}
+
+  .title{
+    font-size:26px;
+    color:#2f5fd7;
+    font-weight:bold;
+  }
+
+  .card{
+    background:#f4f5f7;
+    margin:20px;
+    padding:25px;
+    border-radius:25px;
+    box-shadow:0 15px 30px rgba(0,0,0,0.1);
+  }
+
+  .report-text{
+    white-space:pre-line;
+    font-size:16px;
+    line-height:1.8;
+    font-weight:bold;
+  }
+
+  button{
+    width:100%;
+    margin-top:15px;
+    padding:14px;
+    border:none;
+    border-radius:20px;
+    font-size:16px;
+    font-weight:bold;
+    color:white;
+    cursor:pointer;
+  }
+
+  .copy{ background:linear-gradient(to right,#2f5fd7,#4b84f5); }
+  .whatsapp{ background:#25D366; }
+  .back{ background:gray; }
+
+  </style>
+  </head>
+
+  <body>
+
+  <div class="header">
+    <div class="title">📊 Collection Report</div>
+  </div>
+
+  <div class="card">
+
+    <div class="report-text" id="report">${text}</div>
+
+    <button class="copy" onclick="copyText()">Copy Report</button>
+    <button class="whatsapp" onclick="shareWhatsApp()">Share to WhatsApp</button>
+    <button class="back" onclick="window.close()">Back</button>
+
+  </div>
+
+  <script>
+    function copyText(){
+      const text = document.getElementById("report").innerText;
+      navigator.clipboard.writeText(text);
+      alert("Copied Successfully!");
+    }
+
+    function shareWhatsApp(){
+      const text = document.getElementById("report").innerText;
+      const url = "https://wa.me/?text=" + encodeURIComponent(text);
+      window.open(url, "_blank");
+    }
+  <\/script>
+
+  </body<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collection Calculator</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom,#eef2f8,#dde3f1);
+}
+
+.badge{
+  background:#2f5fd7;
+  color:white;
+  padding:8px 18px;
+  border-radius:25px;
+  display:inline-block;
+  font-weight:bold;
+  font-size:14px;
+  margin-top:30px;
+}
+
+.header{text-align:center;}
+
+.title{
+  font-size:28px;
+  color:#2f5fd7;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.subtitle{
+  color:gray;
+  margin-bottom:25px;
+}
+
+.card{
+  background:#f4f5f7;
+  margin:20px;
+  padding:20px;
+  border-radius:25px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.1);
+}
+
+label{
+  font-weight:bold;
+  display:block;
+  margin-top:15px;
+  margin-bottom:5px;
+}
+
+input, select{
+  width:100%;
+  padding:14px;
+  border-radius:15px;
+  border:1px solid #ccc;
+  font-size:16px;
+  outline:none;
+}
+
+button{
+  width:100%;
+  margin-top:20px;
+  padding:16px;
+  border:none;
+  border-radius:20px;
+  font-size:18px;
+  font-weight:bold;
+  color:white;
+  background:linear-gradient(to right,#2f5fd7,#4b84f5);
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="badge">SIO KOZHIKODE CITY</div>
+  <div class="title">Collection Calculator</div>
+  <div class="subtitle">Track your unit's collection progress with ease</div>
+</div>
+
+<div class="card">
+
+<label>Select Unit</label>
+<select id="unit" onchange="changeTarget()">
+  <option value="">-- Choose Unit --</option>
+  <option value="PUTHIYAGADI">PUTHIYAGADI</option>
+  <option value="KUNDUNGAL">GUNDUNGAL</option>
+  <option value="NADAKKAVU">NADAKKANU</option>
+  <option value="VELLAYIL">VELLAYIL</option>
+  <option value="KINNASSERY">KINNASSERY</option>
+  <option value="MATHOTTAM">MATHOTTAM</option>
+  <option value="ARAKINAR">ARAKINAR</option>
+  <option value="PANNIYANKARA">PANNIYANKARA</option>
+value="MEENCHANDA">MEENCHANDA</option>
+value="VB">VB</option>
+value="KARIKAMKULAM">KARIKAMKULAM</option>
+  <option value="AREA">AREA</option>
+</select>
+
+<label>Target Amount (₹)</label>
+<input type="number" id="target" readonly>
+
+<label>Total Collected (₹)</label>
+<input type="number" id="total">
+
+<label>Today Collected (₹)</label>
+<input type="number" id="today">
+
+<label>House Visit</label>
+<input type="number" id="house">
+
+<label>Person Visit</label>
+<input type="number" id="person">
+
+<button onclick="calculate()">Generate Report</button>
+
+</div>
+
+<script>
+
+const targets = {
+  PUTHIYAGADI: 25000,
+  KUNDUNGAL: 25000,
+  NADAKKAVU: 70000,
+  VELLAYIL: 25000,
+  KINNASSERY: 30000,
+  MATHOTTAM: 15000,
+  ARAKINAR: 12000,
+  PANNIYANKARA: 40000,
+  MEENCHANDA:12000,
+  VB:50000,
+  KARIKAMKULAM:20000,
+  AREA: 260000
+};
+
+function changeTarget(){
+  const unit = document.getElementById("unit").value;
+  document.getElementById("target").value = targets[unit] || "";
+}
+
+window.onload = changeTarget;
+
+function calculate(){
+
+  let unit = document.getElementById("unit").value;
+  let target = parseFloat(document.getElementById("target").value);
+  let total = parseFloat(document.getElementById("total").value);
+  let today = parseFloat(document.getElementById("today").value);
+  let house = document.getElementById("house").value || 0;
+  let person = document.getElementById("person").value || 0;
+
+  if(!unit || !target || !total || !today){
+    alert("Please fill required fields");
+    return;
+  }
+
+  let totalPercent = ((total/target)*100).toFixed(2);
+  let todayPercent = ((today/target)*100).toFixed(2);
+  let remaining = target - total;
+
+  let text = 
+`📊 Collection Report
+
+Unit: ${unit}
+Target: ₹${target}
+Total Collected: ₹${total}
+Today Collection: ₹${today}
+
+House Visit: ${house}
+Person Visit: ${person}
+
+Total Progress: ${totalPercent}%
+Today's Progress: ${todayPercent}%
+
+Remaining: ₹${remaining}`;
+
+  openReport(text);
+}
+
+function openReport(text){
+
+  let newWindow = window.open("", "_blank");
+
+  newWindow.document.write(`
+  <html>
+  <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection Report</title>
+
+  <style>
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom,#eef2f8,#dde3f1);
+  }
+
+  .header{text-align:center;margin-top:30px;}
+
+  .title{
+    font-size:26px;
+    color:#2f5fd7;
+    font-weight:bold;
+  }
+
+  .card{
+    background:#f4f5f7;
+    margin:20px;
+    padding:25px;
+    border-radius:25px;
+    box-shadow:0 15px 30px rgba(0,0,0,0.1);
+  }
+
+  .report-text{
+    white-space:pre-line;
+    font-size:16px;
+    line-height:1.8;
+    font-weight:bold;
+  }
+
+  button{
+    width:100%;
+    margin-top:15px;
+    padding:14px;
+    border:none;
+    border-radius:20px;
+    font-size:16px;
+    font-weight:bold;
+    color:white;
+    cursor:pointer;
+  }
+
+  .copy{ background:linear-gradient(to right,#2f5fd7,#4b84f5); }
+  .whatsapp{ background:#25D366; }
+  .back{ background:gray; }
+
+  </style>
+  </head>
+
+  <body>
+
+  <div class="header">
+    <div class="title">📊 Collection Report</div>
+  </div>
+
+  <div class="card">
+
+    <div class="report-text" id="report">${text}</div>
+
+    <button class="copy" onclick="copyText()">Copy Report</button>
+    <button class="whatsapp" onclick="shareWhatsApp()">Share to WhatsApp</button>
+    <button class="back" onclick="window.close()">Back</button>
+
+  </div>
+
+  <script>
+    function copyText(){
+      const text = document.getElementById("report").innerText;
+      navigator.clipboard.writeText(text);
+      alert("Copied Successfully!");
+    }
+
+    function shareWhatsApp(){
+      const text = document.getElementById("report").innerText;
+      const url = "https://wa.me/?text=" + encodeURIComponent(text);
+      window.open(url, "_blank");
+    }
+  <\/script>
+
+  </body>
+  </html>
+  `);
+}
+
+</script>
+
+</body>
+</html>>
+  </html>
+  `);
+}
+
+</script>
+
+</body>
+</html>
